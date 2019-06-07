@@ -5,36 +5,44 @@ namespace Gu.Wpf.Adorners
     using System.Windows.Threading;
 
     /// <summary>
-    /// Helper class for adding and removing adorners to the <see cref="AdornerLayer"/>
+    /// Helper class for adding and removing adorners to the <see cref="AdornerLayer"/>.
     /// </summary>
     public static class AdornerService
     {
+        private static readonly DependencyProperty AdornerLayerProperty = DependencyProperty.RegisterAttached(
+            "AdornerLayer",
+            typeof(AdornerLayer),
+            typeof(AdornerService),
+            new PropertyMetadata(default(AdornerLayer)));
+
         /// <summary>
         /// Adds <paramref name="adorner"/> to the <see cref="AdornerLayer"/>
-        /// If no adorner layer is present a retry is performed with  DispatcherPriority.Loaded
+        /// If no adorner layer is present a retry is performed with  DispatcherPriority.Loaded.
         /// </summary>
-        /// <param name="adorner">The <see cref="Adorner"/></param>
+        /// <param name="adorner">The <see cref="Adorner"/>.</param>
         public static void Show(Adorner adorner)
         {
             Show(adorner, retry: true);
         }
 
         /// <summary>
-        /// Removes <paramref name="adorner"/> from the <see cref="AdornerLayer"/>
+        /// Removes <paramref name="adorner"/> from the <see cref="AdornerLayer"/>.
         /// </summary>
-        /// <param name="adorner">The <see cref="Adorner"/></param>
+        /// <param name="adorner">The <see cref="Adorner"/>.</param>
         public static void Remove(Adorner adorner)
         {
-            var adornerLayer = GetAdornerLayer(adorner.AdornedElement);
+            var adornerLayer = (AdornerLayer)adorner.GetValue(AdornerLayerProperty) ??
+                               GetAdornerLayer(adorner.AdornedElement);
             adornerLayer?.Remove(adorner);
+            adorner.ClearValue(AdornerLayerProperty);
         }
 
         /// <summary>
         /// Calls <see cref="AdornerLayer.GetAdornerLayer"/> unless <paramref name="adornedElement"/> is a window
-        /// For window we fall back on finding the first <see cref="AdornerDecorator"/> and returning its <see cref="AdornerDecorator.AdornerLayer"/>
+        /// For window we fall back on finding the first <see cref="AdornerDecorator"/> and returning its <see cref="AdornerDecorator.AdornerLayer"/>.
         /// </summary>
         /// <param name="adornedElement">The adorned element.</param>
-        /// <returns>First AdornerLayer above given element, or null</returns>
+        /// <returns>First AdornerLayer above given element, or null.</returns>
         public static AdornerLayer GetAdornerLayer(UIElement adornedElement)
         {
             if (adornedElement is Window window)
@@ -53,15 +61,15 @@ namespace Gu.Wpf.Adorners
             {
                 adornerLayer.Remove(adorner);
                 adornerLayer.Add(adorner);
+                adorner.SetCurrentValue(AdornerLayerProperty, adornerLayer);
             }
             else if (retry)
             {
                 // try again later, perhaps giving layout a chance to create the adorner layer
-                adorner.Dispatcher.BeginInvoke(
+                _ = adorner.Dispatcher.BeginInvoke(
                            DispatcherPriority.Loaded,
                            new DispatcherOperationCallback(ShowAdornerOperation),
-                           new object[] { adorner })
-                       .IgnoreReturnValue();
+                           new object[] { adorner });
             }
         }
 

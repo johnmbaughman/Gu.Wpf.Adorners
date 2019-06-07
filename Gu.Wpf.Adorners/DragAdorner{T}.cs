@@ -1,4 +1,4 @@
-﻿namespace Gu.Wpf.Adorners
+namespace Gu.Wpf.Adorners
 {
     using System;
     using System.Windows;
@@ -67,6 +67,7 @@
         public void Dispose()
         {
             this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -99,11 +100,9 @@
             }
         }
 
-        /// <summary>
-        /// Called when <see cref="DropTarget"/> changes value.
-        /// </summary>
-        /// <param name="oldValue">The old drop target.</param>
-        /// <param name="newValue">The new drop target.</param>
+        /// <summary>This method is invoked when the <see cref="DropTargetProperty"/> changes.</summary>
+        /// <param name="oldValue">The old value of <see cref="DropTargetProperty"/>.</param>
+        /// <param name="newValue">The new value of <see cref="DropTargetProperty"/>.</param>
         protected virtual void OnDropTargetChanged(UIElement oldValue, UIElement newValue)
         {
             this.UpdatePosition();
@@ -112,9 +111,9 @@
         }
 
         /// <summary>
-        /// Called by <see cref="Dispose()"/>
+        /// Called by <see cref="Dispose()"/>.
         /// </summary>
-        /// <param name="disposing">True if called by <see cref="Dispose()"/>, false if called by finalizer</param>
+        /// <param name="disposing">True if called by <see cref="Dispose()"/>, false if called by finalizer.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (this.disposed)

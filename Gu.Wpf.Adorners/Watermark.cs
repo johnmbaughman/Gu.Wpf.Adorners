@@ -25,7 +25,7 @@ namespace Gu.Wpf.Adorners
                 OnTextChanged));
 
         /// <summary>
-        /// Controls visibility of the adorner, default is WatermarkVisibleWhen.EmptyAndNotKeyboardFocused
+        /// Controls visibility of the adorner, default is WatermarkVisibleWhen.EmptyAndNotKeyboardFocused.
         /// </summary>
         public static readonly DependencyProperty VisibleWhenProperty = DependencyProperty.RegisterAttached(
             "VisibleWhen",
@@ -34,10 +34,10 @@ namespace Gu.Wpf.Adorners
             new FrameworkPropertyMetadata(
                 WatermarkVisibleWhen.EmptyAndNotKeyboardFocused,
                 FrameworkPropertyMetadataOptions.Inherits,
-                OnVisibleWhenChanged));
+                (d, e) => UpdateIsShowing(d as Control)));
 
         /// <summary>
-        /// The style for the <see cref="TextBlock"/> rendering <see cref="TextProperty"/>
+        /// The style for the <see cref="TextBlock"/> rendering <see cref="TextProperty"/>.
         /// </summary>
         public static readonly DependencyProperty TextStyleProperty = DependencyProperty.RegisterAttached(
             "TextStyle",
@@ -58,7 +58,7 @@ namespace Gu.Wpf.Adorners
                 OnIsShowingChanged));
 
         /// <summary>
-        /// Gets or sets if the adorner is currently visible
+        /// Gets or sets if the adorner is currently visible.
         /// </summary>
         public static readonly DependencyProperty IsShowingProperty = IsShowingPropertyKey.DependencyProperty;
 
@@ -68,7 +68,7 @@ namespace Gu.Wpf.Adorners
             typeof(Watermark),
             new PropertyMetadata(
                 default(WatermarkAdorner),
-                OnAdornerChanged));
+                (d, e) => ((WatermarkAdorner)e.OldValue)?.ClearChild()));
 
         private static readonly DependencyProperty HandlerProperty = DependencyProperty.RegisterAttached(
             "Handler",
@@ -81,20 +81,16 @@ namespace Gu.Wpf.Adorners
             string Text { get; }
         }
 
-        /// <summary>
-        /// Helper for setting Text property on a UIElement.
-        /// </summary>
-        /// <param name="element">UIElement to set Text property on.</param>
+        /// <summary>Helper for setting <see cref="TextProperty"/> on <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="UIElement"/> to set <see cref="TextProperty"/> on.</param>
         /// <param name="value">Text property value.</param>
         public static void SetText(this UIElement element, string value)
         {
             element.SetValue(TextProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading Text property from a UIElement.
-        /// </summary>
-        /// <param name="element">UIElement to read Text property from.</param>
+        /// <summary>Helper for getting <see cref="TextProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="UIElement"/> to read <see cref="TextProperty"/> from.</param>
         /// <returns>Text property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
@@ -103,20 +99,16 @@ namespace Gu.Wpf.Adorners
             return (string)element.GetValue(TextProperty);
         }
 
-        /// <summary>
-        /// Helper for setting VisibleWhen property on a UIElement.
-        /// </summary>
-        /// <param name="element">UIElement to set VisibleWhen property on.</param>
+        /// <summary>Helper for setting <see cref="VisibleWhenProperty"/> on <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="UIElement"/> to set <see cref="VisibleWhenProperty"/> on.</param>
         /// <param name="value">VisibleWhen property value.</param>
         public static void SetVisibleWhen(this UIElement element, WatermarkVisibleWhen value)
         {
             element.SetValue(VisibleWhenProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading VisibleWhen property from a UIElement.
-        /// </summary>
-        /// <param name="element">UIElement to read VisibleWhen property from.</param>
+        /// <summary>Helper for getting <see cref="VisibleWhenProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="UIElement"/> to read <see cref="VisibleWhenProperty"/> from.</param>
         /// <returns>VisibleWhen property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
@@ -125,20 +117,16 @@ namespace Gu.Wpf.Adorners
             return (WatermarkVisibleWhen)element.GetValue(VisibleWhenProperty);
         }
 
-        /// <summary>
-        /// Helper for setting TextStyle property on a UIElement.
-        /// </summary>
-        /// <param name="element">UIElement to set TextStyle property on.</param>
+        /// <summary>Helper for setting <see cref="TextStyleProperty"/> on <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="UIElement"/> to set <see cref="TextStyleProperty"/> on.</param>
         /// <param name="value">TextStyle property value.</param>
         public static void SetTextStyle(this UIElement element, Style value)
         {
             element.SetValue(TextStyleProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading TextStyle property from a UIElement.
-        /// </summary>
-        /// <param name="element">UIElement to read TextStyle property from.</param>
+        /// <summary>Helper for getting <see cref="TextStyleProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="UIElement"/> to read <see cref="TextStyleProperty"/> from.</param>
         /// <returns>TextStyle property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(UIElement))]
@@ -152,10 +140,8 @@ namespace Gu.Wpf.Adorners
             element.SetValue(IsShowingPropertyKey, value);
         }
 
-        /// <summary>
-        /// Helper for reading IsShowing property from a Control.
-        /// </summary>
-        /// <param name="element">Control to read IsShowing property from.</param>
+        /// <summary>Helper for getting <see cref="IsShowingProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="Control"/> to read <see cref="IsShowingProperty"/> from.</param>
         /// <returns>IsShowing property value.</returns>
         [AttachedPropertyBrowsableForType(typeof(Control))]
         public static bool GetIsShowing(this Control element)
@@ -182,11 +168,6 @@ namespace Gu.Wpf.Adorners
                 UpdateHandlers(adornedElement);
                 UpdateIsShowing(adornedElement);
             }
-        }
-
-        private static void OnVisibleWhenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            UpdateIsShowing(d as Control);
         }
 
         private static void OnTextStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -269,11 +250,6 @@ namespace Gu.Wpf.Adorners
             }
         }
 
-        private static void OnAdornerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((WatermarkAdorner)e.OldValue)?.ClearChild();
-        }
-
         private static void OnSizeChanged(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
@@ -310,7 +286,7 @@ namespace Gu.Wpf.Adorners
                         adornedElement.SetIsShowing(string.IsNullOrEmpty(watermarked.Text) && !adornedElement.IsKeyboardFocused);
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException(nameof(adornedElement), "Should never get here, bug in Gu.Wpf.Adorners.");
                 }
             }
         }

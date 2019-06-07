@@ -47,11 +47,11 @@ namespace Gu.Wpf.Adorners
             typeof(Overlay),
             new FrameworkPropertyMetadata(
                 default(DataTemplateSelector),
-                 FrameworkPropertyMetadataOptions.Inherits,
+                FrameworkPropertyMetadataOptions.Inherits,
                 OnContentTemplateSelectorChanged));
 
         /// <summary>
-        /// Gets or sets the <see cref="Style"/> for rendering <see cref="ContentProperty"/>
+        /// Gets or sets the <see cref="Style"/> for rendering <see cref="ContentProperty"/>.
         /// </summary>
         public static readonly DependencyProperty ContentPresenterStyleProperty = DependencyProperty.RegisterAttached(
             "ContentPresenterStyle",
@@ -71,7 +71,7 @@ namespace Gu.Wpf.Adorners
             typeof(Overlay),
             new PropertyMetadata(
                 default(bool?),
-                OnIsVisibleChanged));
+                (d, e) => UpdateIsShowing(d)));
 
         private static readonly DependencyPropertyKey IsShowingPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
             "IsShowing",
@@ -82,7 +82,7 @@ namespace Gu.Wpf.Adorners
                 OnIsShowingChanged));
 
         /// <summary>
-        /// Gets or sets if the adorner is currently visible
+        /// Gets or sets if the adorner is currently visible.
         /// </summary>
         public static readonly DependencyProperty IsShowingProperty = IsShowingPropertyKey.DependencyProperty;
 
@@ -92,22 +92,18 @@ namespace Gu.Wpf.Adorners
             typeof(Overlay),
             new PropertyMetadata(
                 default(ContentAdorner),
-                OnAdornerChanged));
+                (d, e) => ((ContentAdorner)e.OldValue)?.ClearChild()));
 
-        /// <summary>
-        /// Helper for setting Content property on a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to set Content property on.</param>
+        /// <summary>Helper for setting <see cref="ContentProperty"/> on <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to set <see cref="ContentProperty"/> on.</param>
         /// <param name="value">Content property value.</param>
         public static void SetContent(DependencyObject element, object value)
         {
             element.SetValue(ContentProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading Content property from a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to read Content property from.</param>
+        /// <summary>Helper for getting <see cref="ContentProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to read <see cref="ContentProperty"/> from.</param>
         /// <returns>Content property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(UIElement))]
@@ -116,20 +112,16 @@ namespace Gu.Wpf.Adorners
             return element.GetValue(ContentProperty);
         }
 
-        /// <summary>
-        /// Helper for setting ContentTemplate property on a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to set ContentTemplate property on.</param>
+        /// <summary>Helper for setting <see cref="ContentTemplateProperty"/> on <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to set <see cref="ContentTemplateProperty"/> on.</param>
         /// <param name="value">ContentTemplate property value.</param>
         public static void SetContentTemplate(DependencyObject element, DataTemplate value)
         {
             element.SetValue(ContentTemplateProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading ContentTemplate property from a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to read ContentTemplate property from.</param>
+        /// <summary>Helper for getting <see cref="ContentTemplateProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to read <see cref="ContentTemplateProperty"/> from.</param>
         /// <returns>ContentTemplate property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(UIElement))]
@@ -138,20 +130,16 @@ namespace Gu.Wpf.Adorners
             return (DataTemplate)element.GetValue(ContentTemplateProperty);
         }
 
-        /// <summary>
-        /// Helper for setting ContentTemplateSelector property on a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to set ContentTemplateSelector property on.</param>
+        /// <summary>Helper for setting <see cref="ContentTemplateSelectorProperty"/> on <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to set <see cref="ContentTemplateSelectorProperty"/> on.</param>
         /// <param name="value">ContentTemplateSelector property value.</param>
         public static void SetContentTemplateSelector(DependencyObject element, DataTemplateSelector value)
         {
             element.SetValue(ContentTemplateSelectorProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading ContentTemplateSelector property from a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to read ContentTemplateSelector property from.</param>
+        /// <summary>Helper for getting <see cref="ContentTemplateSelectorProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to read <see cref="ContentTemplateSelectorProperty"/> from.</param>
         /// <returns>ContentTemplateSelector property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(UIElement))]
@@ -160,20 +148,16 @@ namespace Gu.Wpf.Adorners
             return (DataTemplateSelector)element.GetValue(ContentTemplateSelectorProperty);
         }
 
-        /// <summary>
-        /// Helper for setting ContentPresenterStyle property on a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to set ContentPresenterStyle property on.</param>
+        /// <summary>Helper for setting <see cref="ContentPresenterStyleProperty"/> on <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to set <see cref="ContentPresenterStyleProperty"/> on.</param>
         /// <param name="value">ContentPresenterStyle property value.</param>
         public static void SetContentPresenterStyle(DependencyObject element, Style value)
         {
             element.SetValue(ContentPresenterStyleProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading ContentPresenterStyle property from a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to read ContentPresenterStyle property from.</param>
+        /// <summary>Helper for getting <see cref="ContentPresenterStyleProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to read <see cref="ContentPresenterStyleProperty"/> from.</param>
         /// <returns>ContentPresenterStyle property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(UIElement))]
@@ -182,20 +166,16 @@ namespace Gu.Wpf.Adorners
             return (Style)element.GetValue(ContentPresenterStyleProperty);
         }
 
-        /// <summary>
-        /// Helper for setting IsVisible property on a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to set IsVisible property on.</param>
+        /// <summary>Helper for setting <see cref="IsVisibleProperty"/> on <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to set <see cref="IsVisibleProperty"/> on.</param>
         /// <param name="value">IsVisible property value.</param>
         public static void SetIsVisible(DependencyObject element, bool? value)
         {
             element.SetValue(IsVisibleProperty, value);
         }
 
-        /// <summary>
-        /// Helper for reading IsVisible property from a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to read IsVisible property from.</param>
+        /// <summary>Helper for getting <see cref="IsVisibleProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to read <see cref="IsVisibleProperty"/> from.</param>
         /// <returns>IsVisible property value.</returns>
         public static bool? GetIsVisible(DependencyObject element)
         {
@@ -207,10 +187,8 @@ namespace Gu.Wpf.Adorners
             element.SetValue(IsShowingPropertyKey, value);
         }
 
-        /// <summary>
-        /// Helper for reading IsShowing property from a DependencyObject.
-        /// </summary>
-        /// <param name="element">DependencyObject to read IsShowing property from.</param>
+        /// <summary>Helper for getting <see cref="IsShowingProperty"/> from <paramref name="element"/>.</summary>
+        /// <param name="element"><see cref="DependencyObject"/> to read <see cref="IsShowingProperty"/> from.</param>
         /// <returns>IsShowing property value.</returns>
         [AttachedPropertyBrowsableForChildren(IncludeDescendants = false)]
         [AttachedPropertyBrowsableForType(typeof(UIElement))]
@@ -277,11 +255,6 @@ namespace Gu.Wpf.Adorners
             SizeChangedEventManager.UpdateHandler((FrameworkElement)d, OnSizeChanged);
         }
 
-        private static void OnIsVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            UpdateIsShowing(d);
-        }
-
         private static void OnIsShowingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var element = (UIElement)d;
@@ -316,17 +289,12 @@ namespace Gu.Wpf.Adorners
             }
         }
 
-        private static void OnAdornerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ContentAdorner)e.OldValue)?.ClearChild();
-        }
-
         private static void UpdateIsShowing(DependencyObject o)
         {
             if (o is UIElement element)
             {
                 if (!element.IsVisible ||
-                    !Loaded.IsLoaded(element))
+                    !element.IsLoaded())
                 {
                     element.SetIsShowing(false);
                     return;
